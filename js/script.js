@@ -528,10 +528,43 @@ window.addEventListener('DOMContentLoaded', () => {
 	// });
 
 	const result = document.querySelector('.calculating__result span');
-	let sex = 'female',
-		height, weight, age,
+
+	let sex, height, weight, age, ratio;
+
+	if (localStorage.getItem('sex')) {
+		sex = localStorage.getItem('sex');
+	} else {
+		sex = 'female';
+		localStorage.setItem('sex', 'female');
+	}
+
+	if (localStorage.getItem('ratio')) {
+		ratio = localStorage.getItem('ratio');
+	} else {
 		ratio = 1.375;
-	//Calculating of Call
+		localStorage.setItem('ratio', 1.375);
+	}
+	//Calculating of Call выше переменные и ниже код выполнения
+
+	function initLocalSettings(selector, activeClass) {
+		const elements = document.querySelectorAll(selector);
+
+		elements.forEach(elem => {
+			elem.classList.remove(activeClass);
+
+			if (elem.getAttribute('id') === localStorage.getItem('sex')) {
+				elem.classList.add(activeClass);
+			}
+
+			if (elem.getAttribute('data-ratio') === localStorage.getItem('ratio') ) {
+				elem.classList.add(activeClass);
+			}
+		});
+	}
+
+	initLocalSettings('#gender div', 'calculating__choose-item_active');
+	initLocalSettings('.calculating__choose_big div', 'calculating__choose-item_active');
+
 
 	function calcTotal() {
 		if (!sex || !height || !weight || !age || !ratio) {
@@ -549,15 +582,17 @@ window.addEventListener('DOMContentLoaded', () => {
 	
 	calcTotal();
 
-	function getStaticInformation(parentSelector, activeClass) {
-		const elements = document.querySelectorAll(`${parentSelector} div`);
+	function getStaticInformation(selector, activeClass) {
+		const elements = document.querySelectorAll(selector);
 
 		elements.forEach(elem => {
 			elem.addEventListener('click', (e) => {
 				if (e.target.getAttribute('data-ratio')) {
 					ratio = +e.target.getAttribute('data-ratio');
+					localStorage.setItem('ratio', +e.target.getAttribute('data-ratio'));
 				} else {
 					sex = e.target.getAttribute('id');
+					localStorage.setItem('sex', e.target.getAttribute('id'));
 				}
 	
 				elements.forEach(elem => {
@@ -571,8 +606,8 @@ window.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	getStaticInformation('#gender', 'calculating__choose-item_active');
-	getStaticInformation('.calculating__choose_big', 'calculating__choose-item_active');
+	getStaticInformation('#gender div', 'calculating__choose-item_active');
+	getStaticInformation('.calculating__choose_big div', 'calculating__choose-item_active');
 
 	function getDynamicInformation(selector) {
 		const input = document.querySelector(selector);
@@ -778,3 +813,55 @@ window.addEventListener('DOMContentLoaded', () => {
 // localStorage.removeItem('Aumber'); localStorage.clear() - очистить всё
 
 // console.log(localStorage.getItem('number'));
+
+
+//Getter and Setter
+// const persone = {
+// 	name: 'Alex',
+// 	age: 25,
+
+// 	get userAge() {
+// 		return this.age; 
+// 	},
+
+// 	set userAge(num) {
+// 		this.age = num;
+// 	}
+// };
+
+// console.log(persone.userAge = 30);
+// console.log(persone.userAge);
+
+
+//ИНКАПСУЛЯЦИ
+// class User {
+// 	constructor(name, age) {
+// 		this.name = name;
+// 		this._age = age;
+// 	}
+
+// 	#surname = 'Pochechun';
+
+// 	say = () => {
+// 		console.log(`Имя пользователя: ${this.name} ${this.#surname}, возраст: ${this._age}`);
+// 	}
+
+// 	get age() {
+// 		return this._age;
+// 	}
+
+// 	set age(age) {
+// 		if (typeof age === 'number' && age > 0 && age < 110) {
+// 			this._age = age;
+// 		} else {
+// 			console.log(`Недопустимое значение: ${age}`);
+// 		}
+// 	}
+// }
+
+// const ivan = new User('Vladyslav', 20);
+// // console.log(ivan.age); //getter
+// // ivan.age = 99; //setter
+// // console.log(ivan.age);
+// console.log(ivan.surname);
+// ivan.say();
